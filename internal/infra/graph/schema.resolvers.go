@@ -30,6 +30,26 @@ func (r *mutationResolver) CreateOrder(ctx context.Context, input *model.OrderIn
 	}, nil
 }
 
+func (r *mutationResolver) Orders(ctx context.Context, input *model.OrderInput) ([]*model.Order, error) {
+
+	output, err := r.CreateGetOrdersUseCase.Execute()
+
+	if err != nil {
+		return nil, err
+	}
+
+	var orderList []*model.Order
+	for _, order := range output.Orders {
+		orderList = append(orderList, &model.Order{
+			ID:         order.ID,
+			Price:      order.Price,
+			Tax:        order.Tax,
+			FinalPrice: order.FinalPrice,
+		})
+	}
+	return orderList, nil
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
