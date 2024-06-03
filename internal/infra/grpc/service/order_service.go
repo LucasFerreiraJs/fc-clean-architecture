@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"github.com/devfullcycle/20-CleanArch/internal/infra/grpc/pb"
-	"github.com/devfullcycle/20-CleanArch/internal/usecase"
+	"github.com/devfullcycle/fc-clean-architecture/internal/infra/grpc/pb"
+	"github.com/devfullcycle/fc-clean-architecture/internal/usecase"
 )
 
 type OrderService struct {
@@ -13,7 +13,7 @@ type OrderService struct {
 	GetOrdersUseCase   usecase.GetOrdersUseCase
 }
 
-func NewOrderService(createOrderUseCase usecase.CreateOrderUseCase, etOrdersUseCase usecase.GetOrdersUseCase) *OrderService {
+func NewOrderService(createOrderUseCase usecase.CreateOrderUseCase, getOrdersUseCase usecase.GetOrdersUseCase) *OrderService {
 	return &OrderService{
 		CreateOrderUseCase: createOrderUseCase,
 		GetOrdersUseCase:   getOrdersUseCase,
@@ -38,7 +38,7 @@ func (s *OrderService) CreateOrder(ctx context.Context, in *pb.CreateOrderReques
 	}, nil
 }
 
-func (s *OrderService) GetOrders(ctx context.Context, in *pb.Empty) (*pb.OrderList, error) {
+func (s *OrderService) GetOrders(ctx context.Context, in *pb.GetOrdersRequest) (*pb.GetOrdersResponse, error) {
 
 	orders, err := s.GetOrdersUseCase.Execute()
 
@@ -46,19 +46,19 @@ func (s *OrderService) GetOrders(ctx context.Context, in *pb.Empty) (*pb.OrderLi
 		return nil, err
 	}
 
-	var response []*pb.Order
+	var response []*pb.CreateOrderResponse
 
-	for _, order := range orders.Orders {
-		orderItem := &pb.Order{
+	for _, order := range orders {
+		orderItem := &pb.CreateOrderResponse{
 			Id:         order.ID,
-			Price:      float32(order.Price),
-			Tax:        float32(order.Price),
 			FinalPrice: float32(order.FinalPrice),
 		}
+		// Price:      float32(order.Price),
+		// Tax:        float32(order.Price),
 		response = append(response, orderItem)
 	}
 
-	return &pb.OrderList{
-		Orders: response,
+	return &pb.GetOrdersResponse{
+		OrderList: response,
 	}, nil
 }

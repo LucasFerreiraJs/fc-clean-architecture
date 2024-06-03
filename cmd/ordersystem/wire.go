@@ -6,12 +6,12 @@ package main
 import (
 	"database/sql"
 
-	"github.com/devfullcycle/20-CleanArch/internal/entity"
-	"github.com/devfullcycle/20-CleanArch/internal/event"
-	"github.com/devfullcycle/20-CleanArch/internal/infra/database"
-	"github.com/devfullcycle/20-CleanArch/internal/infra/web"
-	"github.com/devfullcycle/20-CleanArch/internal/usecase"
-	"github.com/devfullcycle/20-CleanArch/pkg/events"
+	"github.com/devfullcycle/fc-clean-architecture/internal/entity"
+	"github.com/devfullcycle/fc-clean-architecture/internal/event"
+	"github.com/devfullcycle/fc-clean-architecture/internal/infra/database"
+	"github.com/devfullcycle/fc-clean-architecture/internal/infra/web"
+	"github.com/devfullcycle/fc-clean-architecture/internal/usecase"
+	"github.com/devfullcycle/fc-clean-architecture/pkg/events"
 	"github.com/google/wire"
 )
 
@@ -48,4 +48,12 @@ func NewWebOrderHandler(db *sql.DB, eventDispatcher events.EventDispatcherInterf
 		web.NewWebOrderHandler,
 	)
 	return &web.WebOrderHandler{}
+}
+
+func NewGetOrdersUseCase(*sql.DB) *usecase.GetOrdersUseCase {
+	wire.Build(
+		setOrderRepositoryDependency,
+		usecase.NewGetOrdersUseCase,
+	)
+	return &usecase.GetOrdersUseCase{}
 }

@@ -1,45 +1,40 @@
 package usecase
 
 import (
-	"github.com/devfullcycle/20-CleanArch/internal/entity"
-	"github.com/devfullcycle/20-CleanArch/pkg/events"
+	"github.com/devfullcycle/fc-clean-architecture/internal/entity"
 )
 
-type OrdersInputDTO struct{}
-
-type OrdersOutputDTO struct {
-	Orders []entity.Order
+type GetOrdersOutput struct {
+	ID         string  `json:"id"`
+	FinalPrice float64 `json:"final_price"`
 }
 
 type GetOrdersUseCase struct {
 	OrderRepository entity.OrderRepositoryInterface
-	OrderCreated    events.EventInterface
-	EventDispatcher events.EventDispatcherInterface
 }
 
-func NewGetOrdersUseCase(
-	OrderRepository entity.OrderRepositoryInterface,
-	OrderCreated events.EventInterface,
-	EventDispatcher events.EventDispatcherInterface,
-) *GetOrdersUseCase {
+func NewGetOrdersUseCase(orderRepository entity.OrderRepositoryInterface) *GetOrdersUseCase {
 	return &GetOrdersUseCase{
-		OrderRepository: OrderRepository,
-		OrderCreated:    OrderCreated,
-		EventDispatcher: EventDispatcher,
+		OrderRepository: orderRepository,
 	}
 }
 
-func (c *GetOrdersUseCase) Execute() (OrdersOutputDTO, error) {
+func (l *GetOrdersUseCase) Execute() ([]GetOrdersOutput, error) {
 
-	orders, err := c.OrderRepository.GetAll()
+	output, err := l.OrderRepository.GetAll()
 	if err != nil {
-		return OrdersOutputDTO{}, err
-	}
-	dto := OrdersOutputDTO{
-		Orders: orders,
+		return nil, err
 	}
 
-	c.OrderCreated.SetPayload(dto)
-	c.EventDispatcher.Dispatch(c.OrderCreated)
-	return dto, nil
+	// var listOrder []OrderOutputDTO
+	var listOrder []GetOrdersOutput
+	for _, order := range output {
+		listOrder = append(listOrder, GetOrdersOutput{
+			ID:         order.ID,
+			FinalPrice: order.FinalPrice,
+		})
+	}
+
+	return listOrder, nil
+
 }

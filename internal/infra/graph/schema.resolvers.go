@@ -6,9 +6,10 @@ package graph
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/devfullcycle/20-CleanArch/internal/infra/graph/model"
-	"github.com/devfullcycle/20-CleanArch/internal/usecase"
+	"github.com/devfullcycle/fc-clean-architecture/internal/infra/graph/model"
+	"github.com/devfullcycle/fc-clean-architecture/internal/usecase"
 )
 
 // CreateOrder is the resolver for the createOrder field.
@@ -30,8 +31,8 @@ func (r *mutationResolver) CreateOrder(ctx context.Context, input *model.OrderIn
 	}, nil
 }
 
-func (r *mutationResolver) Orders(ctx context.Context, input *model.OrderInput) ([]*model.Order, error) {
-
+// Orders is the resolver for the orders field.
+func (r *queryResolver) Orders(ctx context.Context) ([]*model.Order, error) {
 	output, err := r.CreateGetOrdersUseCase.Execute()
 
 	if err != nil {
@@ -39,18 +40,76 @@ func (r *mutationResolver) Orders(ctx context.Context, input *model.OrderInput) 
 	}
 
 	var orderList []*model.Order
-	for _, order := range output.Orders {
+	for _, order := range output {
 		orderList = append(orderList, &model.Order{
 			ID:         order.ID,
-			Price:      order.Price,
-			Tax:        order.Tax,
 			FinalPrice: order.FinalPrice,
 		})
 	}
+
+	// orderList = append(orderList, &model.Order{
+	// 	ID:         "01",
+	// 	FinalPrice: 1,
+	// })
+
+	// orderList = append(orderList, &model.Order{
+	// 	ID:         "02",
+	// 	FinalPrice: 2,
+	// })
+	// orderList = append(orderList, &model.Order{
+	// 	ID:         "03",
+	// 	FinalPrice: 3,
+	// })
+
+	fmt.Println(orderList)
 	return orderList, nil
 }
 
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
+// Query returns QueryResolver implementation.
+func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
+
 type mutationResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *queryResolver) GetOrders(ctx context.Context) ([]*model.Order, error) {
+
+	// output, err := r.GetOrdersUseCase.Execute()
+
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	var orderList []*model.Order
+	// for _, order := range output {
+	// 	orderList = append(orderList, &model.Order{
+	// 		ID:         order.ID,
+	// 		FinalPrice: order.FinalPrice,
+	// 	})
+	// }
+
+	orderList = append(orderList, &model.Order{
+		ID:         "01",
+		FinalPrice: 1,
+	})
+
+	orderList = append(orderList, &model.Order{
+		ID:         "02",
+		FinalPrice: 2,
+	})
+	orderList = append(orderList, &model.Order{
+		ID:         "03",
+		FinalPrice: 3,
+	})
+
+	fmt.Println(orderList)
+	return orderList, nil
+}

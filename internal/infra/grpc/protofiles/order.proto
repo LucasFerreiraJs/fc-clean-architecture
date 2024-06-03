@@ -30,7 +30,13 @@ message OrderList {
   repeated Order orders = 1;
 }
 
+message GetOrdersRequest {}
+
+message GetOrdersResponse {
+    repeated CreateOrderResponse order_list = 1;
+}
+
 service OrderService {
   rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
-  rpc GetOrders(empty) returns (OrderList) {}
+  rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse) {}
 }

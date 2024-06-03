@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/devfullcycle/20-CleanArch/internal/entity"
-	"github.com/devfullcycle/20-CleanArch/internal/usecase"
-	"github.com/devfullcycle/20-CleanArch/pkg/events"
+	"github.com/devfullcycle/fc-clean-architecture/internal/entity"
+	"github.com/devfullcycle/fc-clean-architecture/internal/usecase"
+	"github.com/devfullcycle/fc-clean-architecture/pkg/events"
 )
 
 type WebOrderHandler struct {
@@ -16,14 +16,14 @@ type WebOrderHandler struct {
 }
 
 func NewWebOrderHandler(
-	EventDispatcher events.EventDispatcherInterface,
-	OrderRepository entity.OrderRepositoryInterface,
-	OrderCreatedEvent events.EventInterface,
+	eventDispatcher events.EventDispatcherInterface,
+	orderRepository entity.OrderRepositoryInterface,
+	orderCreatedEvent events.EventInterface,
 ) *WebOrderHandler {
 	return &WebOrderHandler{
-		EventDispatcher:   EventDispatcher,
-		OrderRepository:   OrderRepository,
-		OrderCreatedEvent: OrderCreatedEvent,
+		EventDispatcher:   eventDispatcher,
+		OrderRepository:   orderRepository,
+		OrderCreatedEvent: orderCreatedEvent,
 	}
 }
 
@@ -49,7 +49,8 @@ func (h *WebOrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *WebOrderHandler) GetOrders(w http.ResponseWriter, r *http.Request) {
-	getOrders := usecase.NewGetOrdersUseCase(h.OrderRepository, h.OrderCreatedEvent, h.EventDispatcher)
+
+	getOrders := usecase.NewGetOrdersUseCase(h.OrderRepository)
 	outputDTO, err := getOrders.Execute()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

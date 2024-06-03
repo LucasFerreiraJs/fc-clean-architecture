@@ -3,7 +3,7 @@ package database
 import (
 	"database/sql"
 
-	"github.com/devfullcycle/20-CleanArch/internal/entity"
+	"github.com/devfullcycle/fc-clean-architecture/internal/entity"
 )
 
 type OrderRepository struct {
@@ -15,7 +15,8 @@ func NewOrderRepository(db *sql.DB) *OrderRepository {
 }
 
 func (r *OrderRepository) GetAll() ([]entity.Order, error) {
-	query, err := r.Db.Query("SELECT id, price, tax, final_price from orders")
+
+	query, err := r.Db.Query("SELECT id, price, tax, final_price from orders;")
 	if err != nil {
 		return nil, err
 

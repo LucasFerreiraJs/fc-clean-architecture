@@ -1,6 +1,6 @@
-module github.com/devfullcycle/20-CleanArch
+module github.com/devfullcycle/fc-clean-architecture
 
-go 1.19
+go 1.20
 
 require (
 	github.com/99designs/gqlgen v0.17.22
@@ -49,3 +49,5 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace github.com/devfullcycle/fc-clean-architecture/internal/infra/graph/model => ./internal/infra/graph/model
